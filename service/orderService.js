@@ -2,31 +2,65 @@ const Order = require('../models/orders.model');
 const Product = require('../models/products.model');
 
 const OrderService = {
+    // async createOrder(userId, products) {
+    //     if (!products || products.length === 0) {
+    //         throw new Error('Products are required');
+    //     }
+
+    //     // Calculating the total amount of a user 
+    //     let totalAmount = 0;
+    //     for (const item of products) {
+    //         const product = await Product.findById(item.productId);
+    //         if (!product || product.isDeleted) {
+    //             throw new Error(`Product not found: ${item.productId}`);
+    //         }
+    //         if (item.quantity > product.stock) {
+    //             throw new Error(`Insufficient stock for product: ${product.name}`);
+    //         }
+    //         totalAmount += product.price * item.quantity;
+    //     }
+
+    //     // Creating order and saVING IT IN THE DB
+    //     const order = new Order({ userId, products, totalAmount });
+    //     return await order.save();
+    // },
+
     async createOrder(userId, products) {
         if (!products || products.length === 0) {
             throw new Error('Products are required');
         }
-
-        // Calculating the total amount of a user 
+    
         let totalAmount = 0;
-        for (const item of products) {
-            const product = await Product.findById(item.productId);
-            if (!product || product.isDeleted) {
-                throw new Error(`Product not found: ${item.productId}`);
+    
+        try {
+            for (const item of products) {
+                const product = await Product.findById(item.productId);
+                if (!product || product.isDeleted) {
+                    throw new Error(`Product not found: ${item.productId}`);
+                }
+                if (item.quantity > product.stock) {
+                    throw new Error(`Insufficient stock for product: ${product.name}`);
+                }
+    
+                // Decrease stock directly
+                product.stock -= item.quantity;
+                await product.save();
+    
+                totalAmount += product.price * item.quantity;
             }
-            if (item.quantity > product.stock) {
-                throw new Error(`Insufficient stock for product: ${product.name}`);
-            }
-            totalAmount += product.price * item.quantity;
+    
+            // Create the order
+            const order = new Order({ userId, products, totalAmount });
+            return await order.save();
+        } catch (error) {
+            throw new Error(error.message);
         }
-
-        // Creating order and saVING IT IN THE DB
-        const order = new Order({ userId, products, totalAmount });
-        return await order.save();
     },
 
     async getOrders(userId) {
-        return await Order.find({ userId, isDeleted: false }).populate('products.productId', 'name price');
+        const result =  await Order.find({ userId, isDeleted: false }).populate('products.productId', 'name price');
+        console.log(result, "RESULt");
+        return result;
     },
 
     async updateOrderStatus(orderId, status) {

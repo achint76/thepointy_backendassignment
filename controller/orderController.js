@@ -3,7 +3,8 @@ const OrderService = require('../service/orderService');
 const OrderController = {
     async createOrder(req, res) {
         try {
-            const { userId, products } = req.body;
+            const { userId } = req.user;//it is coming from jwt
+            const { products } = req.body;
             const order = await OrderService.createOrder(userId, products);
 
             //this i have used for showing only the required data not all unnecessary data
@@ -28,7 +29,7 @@ const OrderController = {
     async getOrders(req, res) {
         try {
             const { userId } = req.user;//it is coming from jwt
-            console.log(userId);
+            console.log(userId,"USERIID");
             const orders = await OrderService.getOrders(userId);
             console.log(orders,"33");
 

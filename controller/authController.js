@@ -5,11 +5,11 @@ const UserService = require('../service/authService');
 const UserController = {
     async register(req, res) {
         try {
-            const { username, password, email } = req.body;
+            const { username, password, email, role } = req.body;
             if (!username || !password || !email) {
                 return res.status(400).json({ message: 'All fields are required' });
             }
-            const result = await UserService.register(username, email, password);
+            const result = await UserService.register(username, email, password, role);
 
 
             return res.status(201).json({ message: 'User registered successfully',
@@ -30,7 +30,7 @@ const UserController = {
             }
             const result = await UserService.login(email, password);
             
-            return res.status(200).json({ message: 'Login successful', token: result.token, email: result.email });
+            return res.status(200).json({ message: 'Login successful', token: result.token, email: result.email, role: result.role });
             
         } catch (error) {
             res.status(400).json({ error: error.message });

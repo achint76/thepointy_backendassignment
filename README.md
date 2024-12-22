@@ -1,7 +1,7 @@
 # BACKEND ASSIGNMENT
 
 ## Description
-An Event Management System to handle user registrations, logins, product management, orders, and email notifications for various actions. The system includes features like:
+An Ecommerce Management System to handle user registrations, logins, product management, orders, and email notifications for various actions. The system includes features like:
 
 - **User Registration and Login**: Secure user registration with password hashing and JWT-based authentication.
 - **Product Management**: Create, update, get, and delete products (soft deletion).

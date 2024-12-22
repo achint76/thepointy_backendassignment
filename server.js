@@ -1,10 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const bodyParser = require("body-parser");
+const bodyParser = require("body-parser"); 
 const userRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
-const orderRoutes = require('./routes/orderRoutes');
+const orderRoutes = require("./routes/orderRoutes");
+
+require('./cron/cronJobs');
+
 
 dotenv.config(); // to Load environment variables
 

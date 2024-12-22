@@ -6,7 +6,7 @@ const UserController = require('../controller/authController');
 const jwt = require('jsonwebtoken');
 
 const UserService = {
-    async register(username, email, password) {
+    async register(username, email, password, role) {
         try {
             //const { username, password, email } = data;
             
@@ -20,14 +20,15 @@ const UserService = {
             const newUser = new userSchema({
                 username,
                 email,
-                password: hashedPassword
+                password: hashedPassword,
+                role: role || 'user'
             });
 
             await newUser.save();
             //console.log(newUser);
             return newUser;
         } catch (error) {
-            throw new Error(error.message || 'Failed to egister user!');
+            throw new Error(error.message || 'Failed to register user!');
         }
     },
 
@@ -44,8 +45,8 @@ const UserService = {
             }
 
             //returning jwt token
-            const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-            return { token, email: user.email };
+            const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            return { token, email: user.email, role: user.role };
         } catch (error) {
             throw new Error(error.message || 'Failed to login user!');
         }
